@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: shortened_urls
+#
+#  id           :integer          not null, primary key
+#  long_url     :text             not null
+#  short_url    :string           not null
+#  submitter_id :integer          not null
+#  created_at   :datetime
+#  updated_at   :datetime
+#
+
 require 'securerandom'
 
 class ShortenedUrl < ActiveRecord::Base
@@ -9,6 +21,15 @@ class ShortenedUrl < ActiveRecord::Base
     class_name: "User",
     foreign_key: :submitter_id,
     primary_key: :id
+
+  has_many :visits,
+    class_name: "Visit",
+    foreign_key: :shortened_url_id,
+    primary_key: :id
+
+  has_many :visitors,
+    through: :visits,
+    source: :users
 
   def self.random_code
     random_code = ""
