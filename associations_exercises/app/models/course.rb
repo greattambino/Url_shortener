@@ -5,20 +5,19 @@ class Course < ActiveRecord::Base
     primary_key: :id
 
   has_many :enrolled_students,
-    through: :enrollments,
-    source: :user
-
-  belongs_to :students,
     class_name: "User",
     foreign_key: :student_id,
-    primary_key: :id
+    primary_key: :id,
+    through: :enrollments,
+    source: :user
 
   belongs_to :prerequisite,
     class_name: "Course",
     foreign_key: :prereq_id,
     primary_key: :id
 
-  has_many :courses,
-    foreign_key: :prereq_id,
+  belongs_to :instructor,
+    class_name: "User",
+    foreign_key: :instructor_id,
     primary_key: :id
 end
