@@ -28,6 +28,7 @@ class ShortenedUrl < ActiveRecord::Base
     primary_key: :id
 
   has_many :visitors,
+    Proc.new { distinct },
     through: :visits,
     source: :users
 
@@ -47,13 +48,11 @@ class ShortenedUrl < ActiveRecord::Base
   end
 
   def num_clicks
-    Visit.count(conditions: "shortened_url_id = #{self.id}")
+    visits.count
   end
 
   def num_uniques
-    Visit.select('user_id').where(
-      "shortened_url_id = ?", self.id
-    ).distinct.count(:user_id)
+    visitors.count
   end
 
   def num_recent_uniques(mins = 10)
