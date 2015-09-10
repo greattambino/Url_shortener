@@ -45,4 +45,21 @@ class ShortenedUrl < ActiveRecord::Base
       short_url: random_code
     )
   end
+
+  def num_clicks
+    Visit.count(conditions: "shortened_url_id = #{self.id}")
+  end
+
+  def num_uniques
+    Visit.select('user_id').where(
+      "shortened_url_id = ?", self.id
+    ).distinct.count(:user_id)
+  end
+
+  def num_recent_uniques(mins = 10)
+    Visit.select('user_id').where(
+      "shortened_url_id = ? AND created_at > ?",
+      self.id, mins.minutes.ago
+    ).distinct.count(:user_id)
+  end
 end
